@@ -7,10 +7,11 @@ public class P1_Move : PlayerParent {
 
 	void Start () {
 		active = false;
-		speed = 0.5f;
-		maxHealth = currentHealth = 0;
-		mAttack = 2;
-		rAttack = 1;
+		speed = 0.25f;
+		maxHealth = currentHealth = 1000;
+		mAttack = 150;
+		rAttack = 100;
+		fireRate = 100;
 		hasKey = false;
 		potions = 0;
 		deadZone.x = 1000;
@@ -21,6 +22,8 @@ public class P1_Move : PlayerParent {
 	
 
 	void Update () {
+		print (hasKey);
+		print (currentHealth);
 		if (!active) {
 			if(Input.GetKeyDown ("Start_1")){
 				//find an active player and spawn on them

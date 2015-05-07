@@ -1,20 +1,46 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class P3_Move : PlayerParent {
 	private Vector3 temp;
 	
 	
 	void Start () {
-		speed = 0.5f;
-		maxHealth = currentHealth = 0;
-		attack = 0;
+		active = false;
+		speed = 0.25f;
+		maxHealth = currentHealth = 2000;
+		mAttack = 100;
+		rAttack = 100;
+		fireRate = 200;
+		hasKey = false;
+		potions = 0;
+		deadZone.x = 1000;
+		deadZone.y = 5;
+		deadZone.z = 1000;
 		//TODO modify values
 	}
 	
 	
 	void Update () {
+		if (!active) {
+			if(Input.GetKeyDown ("Start_3")){
+				//find an active player and spawn on them
+				this.gameObject.transform.position = GameObject.FindGameObjectWithTag ("activeplayer").transform.position;
+				//set state to active
+				this.gameObject.tag = "activeplayer";
+				active = true;
+				//set hp to max
+				currentHealth = maxHealth;
+			}
+		}
 		Move();
+		if (currentHealth < 0) {
+			this.gameObject.transform.position = deadZone;
+			//set state to deactive
+			this.gameObject.tag = "notactiveplayer";
+			active = false;
+		}
 	}
 	
 	//Gets Controller Input and reacts accordingly
@@ -43,8 +69,24 @@ public class P3_Move : PlayerParent {
 			temp.z -= speed;
 			this.transform.position = temp;
 		}
-		if (Input.GetKeyDown ("X_3")) {
-			//attacks
+		if (Input.GetAxis ("TriggersR_3") > 0.2) {
+			//melee attacks
+			valueModder = Instantiate(meleeHitbox);//TODO modify damage of hitbox
+			valueModder.GetComponent<playerMelee>().setAttack(mAttack);
+		}
+		if (Input.GetAxis ("TriggersL_3") > 0.2) {
+			//ranged attacks
+			valueModder = Instantiate(projectileHitbox);//TODO modify damage of hitbox
+			valueModder.GetComponent<playerProjectiles>().setAttack(rAttack);
+			valueModder.GetComponent<playerProjectiles>().setSpeed(speed+2f);
+			//uses speed of player + 2 for projectile
+		}
+		if (Input.GetKeyDown ("B_3")) {
+			//check if player has potions to use
+			if(potions>0){
+				potions --;
+				//apply potion effect
+			}
 		}
 	}
 }

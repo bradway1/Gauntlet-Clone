@@ -6,15 +6,40 @@ public class P4_Move : PlayerParent {
 	
 	
 	void Start () {
+		active = false;
 		speed = 0.5f;
-		maxHealth = currentHealth = 0;
-		attack = 0;
+		maxHealth = currentHealth = 1000;
+		mAttack = 50;
+		rAttack = 75;
+		fireRate = 50;
+		hasKey = false;
+		potions = 0;
+		deadZone.x = 1000;
+		deadZone.y = 5;
+		deadZone.z = 1000;
 		//TODO modify values
 	}
 	
 	
 	void Update () {
+		if (!active) {
+			if(Input.GetKeyDown ("Start_4")){
+				//find an active player and spawn on them
+				this.gameObject.transform.position = GameObject.FindGameObjectWithTag ("activeplayer").transform.position;
+				//set state to active
+				this.gameObject.tag = "activeplayer";
+				active = true;
+				//set hp to max
+				currentHealth = maxHealth;
+			}
+		}
 		Move();
+		if (currentHealth < 0) {
+			this.gameObject.transform.position = deadZone;
+			//set state to deactive
+			this.gameObject.tag = "notactiveplayer";
+			active = false;
+		}
 	}
 	
 	//Gets Controller Input and reacts accordingly
@@ -43,8 +68,24 @@ public class P4_Move : PlayerParent {
 			temp.z -= speed;
 			this.transform.position = temp;
 		}
-		if (Input.GetKeyDown ("X_4")) {
-			//attacks
+		if (Input.GetAxis ("TriggersR_4") > 0.2) {
+			//melee attacks
+			valueModder = Instantiate(meleeHitbox);//TODO modify damage of hitbox
+			valueModder.GetComponent<playerMelee>().setAttack(mAttack);
+		}
+		if (Input.GetAxis ("TriggersL_4") > 0.2) {
+			//ranged attacks
+			valueModder = Instantiate(projectileHitbox);//TODO modify damage of hitbox
+			valueModder.GetComponent<playerProjectiles>().setAttack(rAttack);
+			valueModder.GetComponent<playerProjectiles>().setSpeed(speed+2f);
+			//uses speed of player + 2 for projectile
+		}
+		if (Input.GetKeyDown ("B_4")) {
+			//check if player has potions to use
+			if(potions>0){
+				potions --;
+				//apply potion effect
+			}
 		}
 	}
 }

@@ -7,6 +7,7 @@ public class PlayerParent : MonoBehaviour {
 	public float mAttack;
 	public float rAttack;
 	public float speed;
+	public float fireRate;
 	public bool active;
 	public Vector3 deadZone;
 	public float potions;
